@@ -15,6 +15,12 @@ from bson.son import SON
 from opaque_keys.edx.locations import AssetLocation, SlashSeparatedCourseKey
 
 
+# TODO OpaqueKey remove after merge of opaque urls
+assert not hasattr(AssetLocation, 'deprecated')
+setattr(AssetLocation, 'deprecated', True)
+setattr(SlashSeparatedCourseKey, 'deprecated', True)
+
+
 class MongoContentStore(ContentStore):
 
     # pylint: disable=W0613
@@ -41,11 +47,6 @@ class MongoContentStore(ContentStore):
         self.fs = gridfs.GridFS(_db, bucket)
 
         self.fs_files = _db[bucket + ".files"]  # the underlying collection GridFS uses
-
-        # TODO remove after merge of opaque urls
-        if not hasattr(AssetLocation, 'deprecated'):
-            setattr(AssetLocation, 'deprecated', True)
-            setattr(SlashSeparatedCourseKey, 'deprecated', True)
 
     def drop_database(self):
         """
